@@ -1,0 +1,28 @@
+---
+import site from '../data/site.json';
+const tel = site.contact.phone.replace(/[^+\d]/g,'');
+---
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand">
+          <img src="/gerb-samtredia.svg" alt="" />
+          <img src="/gerb-chognari.svg" alt="" />
+          {site.brand.ka}
+        </div>
+        <p class="bi"><span class="ka">{site.footer.about.ka}</span><span class="ru">{site.footer.about.ru}</span></p>
+        <!-- Соцсети-заглушки: подставить реальные ссылки клиента. НЕ использовать аккаунты Chagnari Dogs. -->
+        <div class="socials">
+          <a href="https://www.facebook.com/" title="Facebook" target="_blank" rel="noopener">f</a>
+          <a href={`https://wa.me/${tel.replace('+','')}`} title="WhatsApp" target="_blank" rel="noopener">💬</a>
+        </div>
+      </div>
+      <div class="foot-contact">
+        <div class="num"><a href={`tel:${tel}`}>{site.contact.phone}</a></div>
+        <div class="who">{site.contact.name.ka}</div>
+      </div>
+    </div>
+    <div class="copy bi"><span class="ka">{site.footer.place.ka}</span><span class="ru">{site.footer.place.ru} · сделано с заботой о хвостатых</span></div>
+  </div>
+</footer>

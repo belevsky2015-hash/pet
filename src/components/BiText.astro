@@ -1,0 +1,10 @@
+---
+// Двуязычная подпись: грузинский крупно, русский мелким шрифтом.
+// props: t = {ka, ru}, tag (по умолчанию span), class
+const { t, tag = 'span', class: cls = '' } = Astro.props;
+const Tag = tag;
+---
+<Tag class={`bi ${cls}`}>
+  <span class="ka" set:html={t?.ka ?? ''}></span>
+  <span class="ru" set:html={t?.ru ?? ''}></span>
+</Tag>

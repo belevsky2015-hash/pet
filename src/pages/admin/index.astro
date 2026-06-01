@@ -1,0 +1,471 @@
+---
+import '../../styles/admin.css';
+import site from '../../data/site.json';
+---
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Админка · {site.brand.ru}</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,800;9..144,900&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ВХОД -->
+<section class="login" id="login">
+  <div class="login-card">
+    <div class="paw">🐾</div>
+    <h1>Админка</h1>
+    <p>{site.brand.ru} · управление каталогом</p>
+    <form id="loginForm">
+      <input type="password" id="pw" placeholder="Пароль" autocomplete="current-password" />
+      <div class="err" id="loginErr"></div>
+      <button class="btn btn-primary btn-block" type="submit">Войти</button>
+    </form>
+    <div class="note">Пароль задаётся в настройках проекта Cloudflare (переменная <b>ADMIN_PASSWORD</b>). Данные хранятся в общей базе — изменения сразу видны на сайте.</div>
+  </div>
+</section>
+
+<!-- ПРИЛОЖЕНИЕ -->
+<div id="app" class="hidden">
+  <div class="atop">
+    <div class="awrap atop-in">
+      <div class="logo"><span class="paw">🐾</span> {site.brand.ru}</div>
+      <span class="cnt" id="topCnt"></span>
+      <span class="sp"></span>
+      <button class="btn btn-ghost btn-sm" id="logout">Выйти</button>
+    </div>
+  </div>
+
+  <div class="awrap">
+    <div class="toolbar">
+      <button class="btn btn-primary" id="addBtn">＋ Добавить собаку</button>
+      <div class="search"><span class="mag">🔍</span><input id="search" placeholder="Поиск по кличке…" /></div>
+      <div class="seg" id="statusSeg">
+        <button data-s="all" class="on">Все</button>
+        <button data-s="searching">Ищут дом</button>
+        <button data-s="reserved">Зарезервированы</button>
+        <button data-s="homed">Пристроены</button>
+      </div>
+    </div>
+    <div class="dgrid" id="grid"></div>
+  </div>
+</div>
+
+<!-- ФОРМА -->
+<div class="modal" id="editor">
+  <div class="modal-bg" data-close></div>
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2 id="edTitle">Новая собака</h2>
+      <button class="x" data-close>✕</button>
+    </div>
+    <div class="form" id="form"></div>
+    <div class="form-foot">
+      <span class="err" id="formErr"></span>
+      <button class="btn btn-ghost" data-close>Отмена</button>
+      <button class="btn btn-primary" id="saveBtn">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script is:inline define:vars={{ SITE: site }}>
+// ============================================================
+//  СЛОЙ ДАННЫХ (этап 3: общая база через API).
+//    list/get   <- кэш, наполняется из GET /api/dogs
+//    create     -> POST   /api/dogs
+//    update     -> PUT    /api/dogs/:id
+//    remove     -> DELETE /api/dogs/:id
+//    reorder    -> POST   /api/reorder
+//    фото       -> POST   /api/upload (в R2), на сайте — ссылки /img/...
+//    вход       -> POST   /api/login  (пароль в переменной окружения)
+// ============================================================
+let DOGS = [];                  // кэш списка собак
+const pendingFiles = new Map(); // blob:-превью -> сжатый Blob (для загрузки в R2)
+
+async function jfetch(url, opts){
+  const r = await fetch(url, opts);
+  if(!r.ok){
+    let msg = 'Ошибка сервера';
+    try { msg = (await r.json()).error || msg; } catch(e){}
+    const err = new Error(msg); err.status = r.status; throw err;
+  }
+  return r.status === 204 ? null : r.json();
+}
+
+const store = {
+  async load(){ try{ DOGS = await jfetch('/api/dogs'); }catch(e){ DOGS = []; throw e; } return DOGS; },
+  list(){ return DOGS.slice(); },                 // приходит уже отсортированным
+  get(id){ return DOGS.find(d=>d.id===id); },
+  async create(dog){ await jfetch('/api/dogs', { method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(dog) }); await this.load(); },
+  async update(id, dog){ await jfetch('/api/dogs/'+id, { method:'PUT', headers:{'content-type':'application/json'}, body:JSON.stringify(dog) }); await this.load(); },
+  async remove(id){ await jfetch('/api/dogs/'+id, { method:'DELETE' }); await this.load(); },
+  async reorder(ids){ await jfetch('/api/reorder', { method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({ ids }) }); await this.load(); },
+  async toggle(id){ const d=this.get(id); if(!d) return;
+    const order=['searching','reserved','homed']; const next=order[(order.indexOf(d.status||'searching')+1)%order.length];
+    await this.update(id, { ...d, status: next }); },
+  async move(id, dir){ const a=this.list(); const i=a.findIndex(d=>d.id===id), j=i+dir; if(j<0||j>=a.length) return;
+    [a[i], a[j]] = [a[j], a[i]]; await this.reorder(a.map(d=>d.id)); }
+};
+const auth = {
+  async check(){ try{ return (await jfetch('/api/session')).authed === true; }catch(e){ return false; } },
+  async login(pw){ try{ await jfetch('/api/login', { method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({ password: pw }) }); return true; }catch(e){ return false; } },
+  async logout(){ try{ await jfetch('/api/logout', { method:'POST' }); }catch(e){} }
+};
+
+// ---- справочники / метки ----
+const OPT = SITE.options, LOC = SITE.locations;
+const labelRu = (group,key)=>{ const o=(OPT[group]||[]).find(x=>x.key===key); return o?o.ru:key; };
+const sexKey = d => d.sex; // 'boy' | 'girl'
+const weightKey = kg => kg<10?'lt10':kg<15?'10_15':kg<20?'15_20':kg<25?'20_25':'gt25';
+const weightRu = kg => labelRu('weight', weightKey(kg));
+// размер: s <10, m 10–25, l >25 (авто из веса); d.size — ручной override
+const sizeKey = kg => kg==null?'m':(kg<10?'s':kg>25?'l':'m');
+const sizeOf = d => d.size || sizeKey(d.weightKg);
+const sizeRu = d => labelRu('size', sizeOf(d));
+const STT = { searching:'Ищет дом', reserved:'Зарезервирована', homed:'Пристроена' };
+
+// ---- помощники DOM ----
+const $ = s => document.querySelector(s);
+const esc = s => (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+
+// ============================================================
+//  ВХОД
+// ============================================================
+async function showApp(){
+  $('#login').classList.add('hidden'); $('#app').classList.remove('hidden');
+  try { await store.load(); renderList(); }
+  catch(e){ $('#grid').innerHTML = `<div class="empty"><div class="big">⚠️</div><div>Не удалось загрузить данные. Обновите страницу.</div></div>`; }
+}
+$('#loginForm').addEventListener('submit', async e=>{ e.preventDefault();
+  const btn = e.target.querySelector('button[type=submit]');
+  $('#loginErr').textContent=''; btn.disabled=true; btn.textContent='Вход…';
+  const okLogin = await auth.login($('#pw').value.trim());
+  btn.disabled=false; btn.textContent='Войти';
+  if(okLogin) showApp();
+  else $('#loginErr').textContent='Неверный пароль';
+});
+$('#logout').addEventListener('click', async ()=>{ await auth.logout(); location.reload(); });
+
+// ============================================================
+//  СПИСОК СОБАК
+// ============================================================
+let filterStatus='all', searchQ='';
+$('#search').addEventListener('input', e=>{ searchQ=e.target.value.toLowerCase().trim(); renderList(); });
+$('#statusSeg').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b)return;
+  filterStatus=b.dataset.s; $('#statusSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b)); renderList(); });
+
+function dogCardHTML(d){
+  const stk = d.status||'searching';
+  const main = d.photos && d.photos[0];
+  const chips = [labelRu('sex',sexKey(d)), sizeRu(d), labelRu('age',d.age), (LOC[d.location]?LOC[d.location].ru:'')]
+    .filter(Boolean).map(c=>`<span class="chip">${esc(c)}</span>`).join('');
+  return `<div class="dcard" data-id="${d.id}">
+    <div class="ph">
+      ${main?`<img src="${esc(main)}" alt="">`:`<div class="nophoto">🐶</div>`}
+      <span class="badge ${stk}">${STT[stk]||STT.searching}</span>
+      ${d.photos&&d.photos.length>1?`<span class="badge count">📷 ${d.photos.length}</span>`:''}
+    </div>
+    <div class="bd">
+      <h3>${esc(d.name||'Без клички')}</h3>
+      <div class="chips">${chips}</div>
+      <div class="acts">
+        <button class="btn btn-ghost btn-sm" data-act="edit">✏️ Редактировать</button>
+        <button class="btn btn-ghost btn-sm" data-act="toggle">⟳ Статус</button>
+        <button class="btn btn-danger btn-sm" data-act="del">🗑</button>
+        <span class="ord"><button data-act="up" title="Выше">▲</button><button data-act="down" title="Ниже">▼</button></span>
+      </div>
+    </div>
+  </div>`;
+}
+function renderList(){
+  let list = store.list();
+  if(filterStatus!=='all') list=list.filter(d=>(d.status||'searching')===filterStatus);
+  if(searchQ) list=list.filter(d=>(d.name||'').toLowerCase().includes(searchQ));
+  const all = store.list();
+  $('#topCnt').textContent = `Всего: ${all.length} · ищут дом: ${all.filter(d=>(d.status||'searching')==='searching').length}`;
+  const g=$('#grid');
+  if(!list.length){ g.innerHTML=`<div class="empty"><div class="big">🐾</div><div>Ничего не найдено.</div></div>`; return; }
+  g.innerHTML = list.map(dogCardHTML).join('');
+  g.querySelectorAll('.dcard').forEach(card=>{
+    const id=+card.dataset.id;
+    card.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click', async ()=>{
+      const a=b.dataset.act;
+      try {
+        if(a==='edit') return openEditor(id);
+        else if(a==='toggle'){ await store.toggle(id); renderList(); toast('Статус изменён'); }
+        else if(a==='del'){ const d=store.get(id); if(confirm(`Удалить собаку «${d?d.name:''}»? Действие нельзя отменить.`)){ await store.remove(id); renderList(); toast('Удалено'); } }
+        else if(a==='up'){ await store.move(id,-1); renderList(); }
+        else if(a==='down'){ await store.move(id,1); renderList(); }
+      } catch(e){ toast(e.status===401 ? 'Сессия истекла — войдите снова' : ('Ошибка: '+e.message)); }
+    }));
+  });
+}
+
+// ============================================================
+//  ФОРМА КАРТОЧКИ
+// ============================================================
+let editId=null, photos=[];
+function openEditor(id){
+  editId = id||null;
+  const d = id ? store.get(id) : null;
+  photos = d && d.photos ? d.photos.slice() : [];
+  $('#edTitle').textContent = id ? 'Редактировать собаку' : 'Новая собака';
+  $('#formErr').textContent='';
+  $('#form').innerHTML = formHTML(d);
+  wireForm();
+  $('#editor').classList.add('open');
+  renderPhotos();
+}
+function opts(group, sel){ return OPT[group].map(o=>`<option value="${o.key}" ${sel===o.key?'selected':''}>${esc(o.ru)}</option>`).join(''); }
+function formHTML(d){
+  d = d||{};
+  const sex = d.sex||'boy', ster = !!d.sterilized;
+  const chosenChar = new Set(d.character||[]);
+  const charChoices = OPT.character.map(o=>`<span class="choice ${chosenChar.has(o.key)?'on':''}" data-char="${o.key}">${esc(o.ru)}</span>`).join('');
+  return `
+  <div class="field">
+    <label>Кличка <span class="opt">(обязательно)</span></label>
+    <input type="text" id="f_name" value="${esc(d.name||'')}" placeholder="Например: Красавчик" />
+  </div>
+
+  <div class="field">
+    <label>Фотографии <span class="opt">(1–5, первая — главная)</span></label>
+    <div class="drop" id="drop"><div class="e">📷</div><b>Перетащите сюда несколько фото сразу</b><br>или нажмите, чтобы выбрать файлы<div class="hint" id="photoCount"></div></div>
+    <input type="file" id="fileInp" accept="image/*" multiple class="hidden" />
+    <div class="photos" id="photos"></div>
+  </div>
+
+  <div class="row2">
+    <div class="field">
+      <label>Пол</label>
+      <div class="choices" id="sexChoices">
+        <span class="choice ${sex==='boy'?'on':''}" data-sex="boy">Мальчик</span>
+        <span class="choice ${sex==='girl'?'on':''}" data-sex="girl">Девочка</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>Стерилизация</label>
+      <div class="choices"><span class="choice ${ster?'on':''}" id="sterChoice">${ster?'✓ Стерилизована':'Не стерилизована'}</span></div>
+    </div>
+  </div>
+
+  <div class="row2">
+    <div class="field">
+      <label>Вес, кг</label>
+      <input type="number" id="f_weight" min="0" step="0.5" value="${d.weightKg??''}" placeholder="напр. 18" />
+      <div class="hint" id="weightHint"></div>
+    </div>
+    <div class="field">
+      <label>Возраст</label>
+      <select id="f_age">${opts('age', d.age||'young')}</select>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Размер <span class="opt">(считается из веса; можно поправить вручную)</span></label>
+    <div class="choices" id="sizeChoices">
+      <span class="choice ${d.size?'':'on'}" data-sz="">Авто</span>
+      <span class="choice ${d.size==='s'?'on':''}" data-sz="s">Маленькая</span>
+      <span class="choice ${d.size==='m'?'on':''}" data-sz="m">Средняя</span>
+      <span class="choice ${d.size==='l'?'on':''}" data-sz="l">Большая</span>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Характер <span class="opt">(можно несколько)</span></label>
+    <div class="choices" id="charChoices">${charChoices}</div>
+  </div>
+
+  <div class="row2">
+    <div class="field">
+      <label>Локация</label>
+      <select id="f_loc">
+        <option value="samtredia" ${d.location==='samtredia'?'selected':''}>${esc(LOC.samtredia.ru)}</option>
+        <option value="chognari" ${d.location==='chognari'?'selected':''}>${esc(LOC.chognari.ru)}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field subfield">
+    <div class="sl">Порода</div>
+    <div class="row2">
+      <div><label class="opt">Грузинский (ka)</label><input type="text" id="f_breed_ka" value="${esc(d.breed?d.breed.ka:'')}" placeholder="ჯიში" /></div>
+      <div><label class="opt">Русский (для Андрея)</label><input type="text" id="f_breed_ru" value="${esc(d.breed?d.breed.ru:'')}" placeholder="Метис" /></div>
+    </div>
+  </div>
+
+  <div class="field subfield">
+    <div class="sl">Описание / история</div>
+    <label class="opt">Грузинский (ka) — основной текст для местных</label>
+    <textarea id="f_desc_ka" placeholder="ტექსტი ქართულად">${esc(d.description?d.description.ka:'')}</textarea>
+    <label class="opt" style="margin-top:10px">Русский (мелким шрифтом на сайте, для Андрея)</label>
+    <textarea id="f_desc_ru" placeholder="Текст на русском">${esc(d.description?d.description.ru:'')}</textarea>
+  </div>
+
+  <div class="field">
+    <label>Статус</label>
+    <div class="choices" id="statusChoices">
+      <span class="choice ${(d.status||'searching')==='searching'?'on':''}" data-st="searching">Ищет дом</span>
+      <span class="choice ${d.status==='reserved'?'on':''}" data-st="reserved">Зарезервирована</span>
+      <span class="choice ${d.status==='homed'?'on':''}" data-st="homed">Пристроена</span>
+    </div>
+  </div>`;
+}
+
+function wireForm(){
+  // вес -> подсказка диапазона + авто-размер
+  const upd=()=>{ const v=parseFloat($('#f_weight').value);
+    $('#weightHint').textContent = isNaN(v)?'' : `Вес: ${weightRu(v)} · авто-размер: ${labelRu('size', sizeKey(v))}`; };
+  $('#f_weight').addEventListener('input', upd); upd();
+  // размер (одиночный выбор; «Авто» = data-sz="")
+  $('#sizeChoices').addEventListener('click', e=>{ const c=e.target.closest('[data-sz]'); if(!c)return;
+    $('#sizeChoices').querySelectorAll('.choice').forEach(x=>x.classList.toggle('on',x===c)); });
+  // пол
+  $('#sexChoices').addEventListener('click', e=>{ const c=e.target.closest('[data-sex]'); if(!c)return;
+    $('#sexChoices').querySelectorAll('.choice').forEach(x=>x.classList.toggle('on',x===c)); });
+  // стерилизация (тоггл)
+  $('#sterChoice').addEventListener('click', e=>{ const on=e.target.classList.toggle('on'); e.target.textContent= on?'✓ Стерилизована':'Не стерилизована'; });
+  // характер (мультивыбор)
+  $('#charChoices').addEventListener('click', e=>{ const c=e.target.closest('[data-char]'); if(c) c.classList.toggle('on'); });
+  // статус
+  $('#statusChoices').addEventListener('click', e=>{ const c=e.target.closest('[data-st]'); if(!c)return;
+    $('#statusChoices').querySelectorAll('.choice').forEach(x=>x.classList.toggle('on',x===c)); });
+  // фото
+  const drop=$('#drop'), inp=$('#fileInp'), box=$('#editor .modal-box');
+  drop.addEventListener('click',()=>inp.click());
+  inp.addEventListener('change', e=>{ addFiles(e.target.files); inp.value=''; });
+  // подсветка при перетаскивании над всей формой
+  ['dragover','dragenter'].forEach(ev=>box.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.add('hover'); }));
+  box.addEventListener('dragleave', e=>{ if(!box.contains(e.relatedTarget)) drop.classList.remove('hover'); });
+  // файлы можно бросить в любое место формы, не только в пунктирную рамку
+  box.addEventListener('drop', e=>{ e.preventDefault(); drop.classList.remove('hover'); addFiles(e.dataTransfer.files); });
+}
+// Сжимаем фото в браузере (до 1280px, JPEG ~0.72) -> Blob для загрузки в R2.
+// Меньше размер — быстрее грузится сайт и экономнее хранилище.
+function compressToBlob(file){
+  return new Promise((resolve, reject)=>{
+    const r = new FileReader();
+    r.onerror = reject;
+    r.onload = () => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        const MAX = 1280;
+        let { width:w, height:h } = img;
+        if (w > MAX || h > MAX){ const k = Math.min(MAX/w, MAX/h); w = Math.round(w*k); h = Math.round(h*k); }
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        c.toBlob(b => b ? resolve(b) : reject(new Error('blob')), 'image/jpeg', 0.72);
+      };
+      img.src = r.result;
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+async function addFiles(files){
+  const left = 5 - photos.length;
+  if(left<=0){ toast('Максимум 5 фото'); return; }
+  for(const f of [...files].slice(0, left)){
+    if(!f.type.startsWith('image/')) continue;
+    try { const blob = await compressToBlob(f); const preview = URL.createObjectURL(blob);
+      pendingFiles.set(preview, blob); photos.push(preview); renderPhotos(); }
+    catch(e){ toast('Не удалось обработать фото'); }
+  }
+}
+
+// Загружаем новые фото (blob:-превью) в R2 и заменяем их на ссылки /img/...
+async function uploadPending(){
+  for(let i=0;i<photos.length;i++){
+    const p = photos[i];
+    if(typeof p==='string' && pendingFiles.has(p)){
+      const blob = pendingFiles.get(p);
+      const fd = new FormData(); fd.append('file', new File([blob], 'photo.jpg', { type:'image/jpeg' }));
+      const { url } = await jfetch('/api/upload', { method:'POST', body:fd });
+      pendingFiles.delete(p); URL.revokeObjectURL(p); photos[i] = url;
+    }
+  }
+}
+function renderPhotos(){
+  const box=$('#photos'); if(!box) return;
+  box.innerHTML = photos.map((p,i)=>`<div class="pthumb ${i===0?'main':''}">
+    <img src="${p}" alt="">
+    ${i===0?'<span class="main-tag">Главная</span>':''}
+    <div class="pacts">
+      ${i>0?`<button data-pi="${i}" data-pa="main" title="Сделать главной">★</button>`:''}
+      ${i>0?`<button data-pi="${i}" data-pa="left">←</button>`:''}
+      ${i<photos.length-1?`<button data-pi="${i}" data-pa="right">→</button>`:''}
+      <button data-pi="${i}" data-pa="del">✕</button>
+    </div>
+  </div>`).join('');
+  const pc=$('#photoCount'); if(pc) pc.textContent = photos.length ? `Загружено: ${photos.length} из 5${photos.length>=5?' (максимум)':''}` : '';
+  box.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    const i=+b.dataset.pi, a=b.dataset.pa;
+    if(a==='del') photos.splice(i,1);
+    else if(a==='main'){ const [x]=photos.splice(i,1); photos.unshift(x); }
+    else if(a==='left'){ [photos[i-1],photos[i]]=[photos[i],photos[i-1]]; }
+    else if(a==='right'){ [photos[i+1],photos[i]]=[photos[i],photos[i+1]]; }
+    renderPhotos();
+  }));
+}
+
+function collect(){
+  const name=$('#f_name').value.trim();
+  const sex=$('#sexChoices .choice.on').dataset.sex;
+  const ster=$('#sterChoice').classList.contains('on');
+  const weightKg=parseFloat($('#f_weight').value);
+  const sizeSel=$('#sizeChoices .choice.on');
+  const size=(sizeSel && sizeSel.dataset.sz) ? sizeSel.dataset.sz : null;
+  const age=$('#f_age').value;
+  const character=[...$('#charChoices').querySelectorAll('.choice.on')].map(c=>c.dataset.char);
+  const location=$('#f_loc').value;
+  const status=$('#statusChoices .choice.on').dataset.st;
+  const breed={ka:$('#f_breed_ka').value.trim(), ru:$('#f_breed_ru').value.trim()};
+  const description={ka:$('#f_desc_ka').value.trim(), ru:$('#f_desc_ru').value.trim()};
+  return { name, photos:photos.slice(), sex, sterilized:ster, weightKg:isNaN(weightKg)?null:weightKg, size, age, character, location, status, breed, description };
+}
+$('#saveBtn').addEventListener('click', async ()=>{
+  const btn=$('#saveBtn');
+  const d=collect(); const errs=[];
+  if(!d.name) errs.push('кличку');
+  if(!d.photos.length) errs.push('хотя бы одно фото');
+  if(d.weightKg==null) errs.push('вес');
+  if(errs.length){ $('#formErr').textContent='Заполните: '+errs.join(', ');
+    if(!d.name) $('#f_name').classList.add('bad'); if(d.weightKg==null) $('#f_weight').classList.add('bad'); return; }
+
+  btn.disabled=true; btn.textContent='Сохранение…'; $('#formErr').textContent='';
+  try {
+    await uploadPending();           // сжатые фото -> R2, ссылки /img/... в photos
+    d.photos = photos.slice();
+    if(editId) await store.update(editId, d);
+    else       await store.create(d);
+    closeEditor(); renderList(); toast(editId?'Сохранено':'Собака добавлена');
+  } catch(e){
+    $('#formErr').textContent = e.status===401 ? 'Сессия истекла — войдите снова' : ('Не удалось сохранить: '+e.message);
+  } finally {
+    btn.disabled=false; btn.textContent='Сохранить';
+  }
+});
+$('#addBtn').addEventListener('click', ()=>openEditor(null));
+function closeEditor(){ $('#editor').classList.remove('open'); }
+$('#editor').querySelectorAll('[data-close]').forEach(el=>el.addEventListener('click', closeEditor));
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeEditor(); });
+$('#form').addEventListener('input', e=>{ if(e.target.classList) e.target.classList.remove('bad'); $('#formErr').textContent=''; });
+
+// пока форма открыта — не даём браузеру открывать перетащенные файлы мимо зоны
+['dragover','drop'].forEach(ev=>window.addEventListener(ev,e=>{ if($('#editor').classList.contains('open')) e.preventDefault(); }));
+
+// если сессия ещё активна — сразу открываем приложение
+auth.check().then(ok=>{ if(ok) showApp(); });
+</script>
+</body>
+</html>

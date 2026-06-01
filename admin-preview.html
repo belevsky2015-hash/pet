@@ -1,0 +1,303 @@
+<!DOCTYPE html><html lang="ru"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Админка · Chognari Dogs</title><meta name="robots" content="noindex"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,800;9..144,900&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet"><style>:root{--ink:#2a2018;--paper:#f4ead8;--cream:#fffaf2;--amber:#e08c2f;--amber-deep:#bd6f1c;--rust:#a8442a;--moss:#5c6b3c;--line:#e1d2bb;--muted:#7a6a55;--slate:#6e879a;--shadow:rgba(74,48,18,.16);--ok:#3f8a4f;--okbg:#e6f1e3;--warn:#a8442a}*{box-sizing:border-box;margin:0;padding:0}body{font-family:Onest,system-ui,sans-serif;color:var(--ink);background:var(--paper);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}button{font-family:inherit;cursor:pointer}input,select,textarea{font-family:inherit;font-size:16px}.hidden{display:none!important}.awrap{max-width:1100px;margin:0 auto;padding:0 18px}.login{min-height:100vh;display:grid;place-items:center;padding:20px}.login-card{background:var(--cream);border:1px solid var(--line);border-radius:24px;padding:34px;max-width:380px;width:100%;box-shadow:0 24px 50px -24px var(--shadow);text-align:center}.login-card .paw{font-size:40px}.login-card h1{font-family:Fraunces,serif;font-weight:900;font-size:26px;margin:8px 0 4px}.login-card p{color:var(--muted);font-size:14px;margin-bottom:22px}.login-card input{width:100%;padding:14px 16px;border:2px solid var(--line);border-radius:14px;margin-bottom:14px;text-align:center}.login-card input:focus{outline:none;border-color:var(--amber)}.login-card .err{color:var(--warn);font-size:14px;margin-bottom:12px;min-height:20px}.btn{border:none;border-radius:14px;font-weight:700;padding:13px 22px;transition:.18s;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:16px}.btn-primary{background:linear-gradient(135deg,var(--amber),var(--amber-deep));color:#fff;box-shadow:0 10px 22px -10px var(--amber-deep)}.btn-primary:hover{transform:translateY(-1px)}.btn-ghost{background:var(--cream);color:var(--ink);border:1.5px solid var(--line)}.btn-ghost:hover{border-color:var(--amber)}.btn-danger{background:#fbeae6;color:var(--warn);border:1.5px solid #eccbc3}.btn-danger:hover{background:#f6dcd5}.btn-block{width:100%}.btn-sm{padding:8px 12px;font-size:14px;border-radius:11px}.note{background:#fff6e6;border:1px solid #f0dcb4;border-radius:12px;padding:10px 12px;font-size:13px;color:var(--muted);margin-top:16px}.atop{position:sticky;top:0;z-index:20;background:#f4ead8f2;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}.atop-in{display:flex;align-items:center;gap:14px;height:64px}.atop .logo{display:flex;align-items:center;gap:9px;font-family:Fraunces,serif;font-weight:900;font-size:19px}.atop .logo .paw{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--amber),var(--amber-deep));font-size:17px}.atop .sp{margin-left:auto}.atop .cnt{color:var(--muted);font-size:14px}.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:22px 0}.toolbar .search{flex:1;min-width:200px;position:relative}.toolbar .search input{width:100%;padding:12px 14px 12px 40px;border:2px solid var(--line);border-radius:14px;background:var(--cream)}.toolbar .search input:focus{outline:none;border-color:var(--amber)}.toolbar .search .mag{position:absolute;left:14px;top:50%;transform:translateY(-50%);opacity:.5}.seg{display:inline-flex;background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:3px}.seg button{border:none;background:none;padding:9px 14px;border-radius:11px;font-weight:600;font-size:14px;color:var(--muted)}.seg button.on{background:linear-gradient(135deg,var(--amber),var(--amber-deep));color:#fff}.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding-bottom:60px}.dcard{background:var(--cream);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 8px 22px -18px var(--shadow);display:flex;flex-direction:column}.dcard .ph{aspect-ratio:16/10;position:relative;background:#eee;overflow:hidden}.dcard .ph img{width:100%;height:100%;object-fit:cover}.dcard .ph .nophoto{position:absolute;inset:0;display:grid;place-items:center;color:#bbb;font-size:30px}.badge{position:absolute;top:10px;left:10px;font-size:12px;font-weight:700;padding:5px 10px;border-radius:20px;color:#fff}.badge.searching{background:var(--moss)}.badge.homed{background:#9a8a72}.badge.count{left:auto;right:10px;background:#2a2018bf}.dcard .bd{padding:13px 15px 15px;display:flex;flex-direction:column;gap:9px;flex:1}.dcard h3{font-family:Fraunces,serif;font-weight:700;font-size:20px}.dcard .chips{display:flex;flex-wrap:wrap;gap:5px}.dcard .chip{font-size:12px;font-weight:600;color:var(--moss);background:#eef0e3;padding:3px 9px;border-radius:20px}.dcard .acts{display:flex;gap:7px;flex-wrap:wrap;margin-top:auto;align-items:center}.dcard .ord{display:flex;flex-direction:column;gap:2px;margin-left:auto}.dcard .ord button{width:26px;height:20px;border:1px solid var(--line);background:var(--cream);border-radius:7px;font-size:11px;line-height:1;color:var(--muted)}.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:50px 20px}.empty .big{font-size:40px;margin-bottom:8px}.modal{position:fixed;inset:0;z-index:50;display:none;align-items:flex-start;justify-content:center;padding:24px;overflow:auto}.modal.open{display:flex}.modal-bg{position:fixed;inset:0;background:#2a20188c;backdrop-filter:blur(3px)}.modal-box{position:relative;background:var(--cream);border-radius:22px;max-width:720px;width:100%;box-shadow:0 30px 70px -28px #00000080;margin:auto}.modal-head{display:flex;align-items:center;gap:12px;padding:20px 24px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--cream);border-radius:22px 22px 0 0;z-index:2}.modal-head h2{font-family:Fraunces,serif;font-weight:800;font-size:22px}.modal-head .x{margin-left:auto;width:38px;height:38px;border-radius:50%;border:none;background:#efe4d2;font-size:18px}.form{padding:20px 24px 24px;display:flex;flex-direction:column;gap:18px}.field label{display:block;font-weight:700;font-size:14px;margin-bottom:7px}.field label .opt{font-weight:400;color:var(--muted);font-size:12px}.field input[type=text],.field input[type=number],.field select,.field textarea{width:100%;padding:11px 13px;border:2px solid var(--line);border-radius:12px;background:#fff}.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--amber)}.field textarea{min-height:74px;resize:vertical}.field .hint{font-size:12px;color:var(--muted);margin-top:5px}.field .bad{border-color:var(--warn)!important}.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.choices{display:flex;flex-wrap:wrap;gap:8px}.choice{border:2px solid var(--line);background:#fff;border-radius:30px;padding:9px 15px;font-weight:600;font-size:14px;color:var(--ink)}.choice.on{background:linear-gradient(135deg,var(--amber),var(--amber-deep));color:#fff;border-color:transparent}.subfield{background:var(--paper);border-radius:12px;padding:13px;border:1px solid var(--line)}.subfield .sl{font-size:12px;color:var(--muted);margin-bottom:6px}.drop{border:2px dashed var(--line);border-radius:14px;padding:18px;text-align:center;color:var(--muted);background:#fff;transition:.18s;cursor:pointer}.drop.hover{border-color:var(--amber);background:#fff8ee}.drop .e{font-size:26px}.photos{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}.pthumb{position:relative;width:96px;height:74px;border-radius:11px;overflow:hidden;border:2px solid var(--line)}.pthumb.main{border-color:var(--amber)}.pthumb img{width:100%;height:100%;object-fit:cover}.pthumb .main-tag{position:absolute;top:3px;left:3px;background:var(--amber);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px}.pthumb .pacts{position:absolute;bottom:0;left:0;right:0;display:flex;background:#00000073}.pthumb .pacts button{flex:1;border:none;background:none;color:#fff;font-size:11px;padding:3px 0}.pthumb .pacts button:hover{background:#0000004d}.form-foot{display:flex;gap:12px;justify-content:flex-end;padding:18px 24px;border-top:1px solid var(--line);position:sticky;bottom:0;background:var(--cream);border-radius:0 0 22px 22px;flex-wrap:wrap}.form-foot .err{margin-right:auto;color:var(--warn);font-size:14px;align-self:center}.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%) translateY(20px);background:var(--ink);color:var(--cream);padding:13px 22px;border-radius:30px;opacity:0;transition:.25s;z-index:80;font-weight:600}.toast.show{opacity:1;transform:translate(-50%) translateY(0)}@media (max-width:640px){.row2{grid-template-columns:1fr}.modal{padding:0}.modal-box{border-radius:0;min-height:100vh}.modal-head{border-radius:0}}
+</style></head> <body> <!-- ВХОД --> <section class="login" id="login"> <div class="login-card"> <div class="paw">🐾</div> <h1>Админка</h1> <p>Chognari Dogs · управление каталогом</p> <form id="loginForm"> <input type="password" id="pw" placeholder="Пароль" autocomplete="current-password"> <div class="err" id="loginErr"></div> <button class="btn btn-primary btn-block" type="submit">Войти</button> </form> <div class="note">Демо-вход: пароль <b>chognari</b>. Данные сохраняются только в этом браузере. Настоящий вход и общая база появятся на этапе 3.</div> </div> </section> <!-- ПРИЛОЖЕНИЕ --> <div id="app" class="hidden"> <div class="atop"> <div class="awrap atop-in"> <div class="logo"><span class="paw">🐾</span> Chognari Dogs</div> <span class="cnt" id="topCnt"></span> <span class="sp"></span> <button class="btn btn-ghost btn-sm" id="logout">Выйти</button> </div> </div> <div class="awrap"> <div class="toolbar"> <button class="btn btn-primary" id="addBtn">＋ Добавить собаку</button> <div class="search"><span class="mag">🔍</span><input id="search" placeholder="Поиск по кличке…"></div> <div class="seg" id="statusSeg"> <button data-s="all" class="on">Все</button> <button data-s="searching">Ищут дом</button> <button data-s="homed">Пристроены</button> </div> </div> <div class="dgrid" id="grid"></div> </div> </div> <!-- ФОРМА --> <div class="modal" id="editor"> <div class="modal-bg" data-close></div> <div class="modal-box"> <div class="modal-head"> <h2 id="edTitle">Новая собака</h2> <button class="x" data-close>✕</button> </div> <div class="form" id="form"></div> <div class="form-foot"> <span class="err" id="formErr"></span> <button class="btn btn-ghost" data-close>Отмена</button> <button class="btn btn-primary" id="saveBtn">Сохранить</button> </div> </div> </div> <div class="toast" id="toast"></div> <script>(function(){const SEED = [{"id":1,"name":"Красавчик","photos":["https://placedog.net/600/450?id=190","https://placedog.net/600/450?id=191","https://placedog.net/600/450?id=192"],"sex":"boy","sterilized":true,"weightKg":18,"age":"young","character":["balanced","affectionate","playful"],"breed":{"ka":"მეტისი","ru":"Метис"},"location":"chognari","description":{"ka":"ახალგაზრდა, მშვიდი და ძალიან მოსიყვარულე.","ru":"Молодой, спокойный и очень ласковый. Вес около 18 кг."},"status":"searching"},{"id":2,"name":"Кнопа","photos":["https://placedog.net/600/450?id=200","https://placedog.net/600/450?id=201","https://placedog.net/600/450?id=202","https://placedog.net/600/450?id=203"],"sex":"girl","sterilized":true,"weightKg":12,"age":"adult","character":["calm","guard"],"breed":{"ka":"მეტისი","ru":"Метис"},"location":"samtredia","description":{"ka":"მშვიდი, ღირსეული გოგო კეთილი გულით. სტერილიზებულია.","ru":"Спокойная девочка с достоинством и добрым сердцем. Стерилизована. Около 12 кг."},"status":"searching"},{"id":3,"name":"Рыжик","photos":["https://placedog.net/600/450?id=210","https://placedog.net/600/450?id=211","https://placedog.net/600/450?id=212"],"sex":"boy","sterilized":false,"weightKg":27,"age":"young","character":["active","dog_friendly","playful"],"breed":{"ka":"მეტისი (დიდი)","ru":"Метис (крупный)"},"location":"chognari","description":{"ka":"ენერგიული და მხიარული, უყვარს გრძელი სეირნობა. დიდი ძაღლი, 25 კგ-ზე მეტი.","ru":"Энергичный непоседа, обожает долгие прогулки. Крупный, больше 25 кг."},"status":"searching"},{"id":4,"name":"Маля","photos":["https://placedog.net/600/450?id=220","https://placedog.net/600/450?id=221","https://placedog.net/600/450?id=222","https://placedog.net/600/450?id=223","https://placedog.net/600/450?id=224"],"sex":"girl","sterilized":false,"weightKg":8,"age":"puppy","character":["affectionate","calm","kids"],"breed":{"ka":"მეტისი (პატარა)","ru":"Метис (мелкий)"},"location":"samtredia","description":{"ka":"პატარა სინაზე, თბილ კალთებზე ოცნებობს. ბავშვებთან კარგად. ჯერ არ არის სტერილიზებული.","ru":"Маленькая нежность, мечтает о тёплых коленях. Ладит с детьми. Пока не стерилизована. До 10 кг."},"status":"searching"},{"id":5,"name":"Граф","photos":["https://placedog.net/600/450?id=230","https://placedog.net/600/450?id=231","https://placedog.net/600/450?id=232"],"sex":"boy","sterilized":true,"weightKg":30,"age":"adult","character":["calm","balanced","guard","dog_friendly"],"breed":{"ka":"მეტისი (დიდი)","ru":"Метис (крупный)"},"location":"chognari","description":{"ka":"მშვიდი, ზრდასრული ძაღლი კეთილშობილური მანერებით. კარგი დარაჯი.","ru":"Спокойный взрослый пёс с благородными манерами. Хороший сторож. Больше 25 кг."},"status":"searching"},{"id":6,"name":"Звёздочка","photos":["https://placedog.net/600/450?id=240","https://placedog.net/600/450?id=241","https://placedog.net/600/450?id=242"],"sex":"girl","sterilized":true,"weightKg":16,"age":"young","character":["active","affectionate","kids","playful"],"breed":{"ka":"მეტისი","ru":"Метис"},"location":"samtredia","description":{"ka":"აქტიური და ცნობისმოყვარე, მზადაა სამყაროს გასაცნობად. სტერილიზებული. ბავშვებთან კარგად.","ru":"Активная и любопытная, готова исследовать мир. Стерилизована. Ладит с детьми. Около 16 кг."},"status":"searching"}];
+const SITE = {"_note":"Двуязычные строки интерфейса: ka — грузинский (крупно), ru — русский (мелким шрифтом для Андрея). ВАЖНО: грузинский перевод сделан вчерне и должен быть проверен носителем (куратором).","contact":{"name":{"ka":"ნათია","ru":"Натия"},"phone":"+995 597 934 007","phoneNote":{"ka":"დარეკეთ — ვუპასუხებთ","ru":"Звоните — ответим"}},"nav":{"dogs":{"ka":"ძაღლები","ru":"Собаки"},"conditions":{"ka":"პირობები","ru":"Условия"},"help":{"ka":"დახმარება","ru":"Помочь"}},"hero":{"eyebrow":{"ka":"ეძებენ სახლს","ru":"Ищут дом"},"title":{"ka":"იპოვე ერთგული მეგობარი","ru":"Найди верного друга"},"subtitle":{"ka":"ეს ძაღლები უკვე ერთხელ გადაარჩინეს. დაგვეხმარეთ მათ სახლის პოვნაში — სამტრედიასა და სოფელ ჩოგნარში.","ru":"Эти собаки уже однажды были спасены. Помогите им найти дом — мы в Самтредиа и селе Чогнари."},"ctaPrimary":{"ka":"ძაღლების ნახვა","ru":"Смотреть собак"},"ctaHelp":{"ka":"როგორ დავეხმაროთ","ru":"Как помочь"}},"catalog":{"kicker":{"ka":"აირჩიე მეგობარი","ru":"Выбрать друга"},"title":{"ka":"ჩვენი ძაღლები","ru":"Наши собаки"},"subtitle":{"ka":"გაფილტრე სქესის, წონის, ასაკისა და ხასიათის მიხედვით.","ru":"Отфильтруй по полу, весу, возрасту и характеру."},"found":{"ka":"ნაპოვნია","ru":"Найдено"},"emptyTitle":{"ka":"ასეთი ძაღლი ჯერ არ არის","ru":"Под эти условия пока нет собак"},"emptyText":{"ka":"სცადეთ ფილტრის მოხსნა ან მოგვიანებით შემოიარეთ.","ru":"Попробуйте убрать часть фильтров или загляните позже."}},"filter":{"title":{"ka":"ფილტრი","ru":"Фильтр"},"reset":{"ka":"გასუფთავება","ru":"Сбросить"},"groups":{"sex":{"ka":"სქესი","ru":"Пол"},"weight":{"ka":"წონა","ru":"Вес"},"age":{"ka":"ასაკი","ru":"Возраст"},"character":{"ka":"ხასიათი","ru":"Характер"}}},"options":{"sex":[{"key":"boy","ka":"ბიჭი","ru":"Мальчик"},{"key":"girl","ka":"გოგო","ru":"Девочка"},{"key":"ster","ka":"სტერილ./კასტრ.","ru":"Стерильный/кастрированный"}],"weight":[{"key":"lt10","ka":"10 კგ-მდე","ru":"до 10 кг"},{"key":"10_15","ka":"10–15 კგ","ru":"10–15 кг"},{"key":"15_20","ka":"15–20 კგ","ru":"15–20 кг"},{"key":"20_25","ka":"20–25 კგ","ru":"20–25 кг"},{"key":"gt25","ka":"25 კგ-ზე მეტი","ru":"больше 25 кг"}],"age":[{"key":"puppy","ka":"ლეკვი","ru":"Щенок"},{"key":"young","ka":"ახალგაზრდა","ru":"Молодой"},{"key":"adult","ka":"ზრდასრული","ru":"Взрослый"}],"character":[{"key":"calm","ka":"მშვიდი","ru":"Спокойный"},{"key":"active","ka":"აქტიური","ru":"Активный"},{"key":"affectionate","ka":"მოსიყვარულე","ru":"Ласковый"},{"key":"balanced","ka":"დაბალანსებული","ru":"Уравновешенный"},{"key":"kids","ka":"ბავშვებთან კარგად","ru":"Ладит с детьми"},{"key":"playful","ka":"მოთამაშე","ru":"Игривый"},{"key":"guard","ka":"დარაჯი","ru":"Сторожевой"},{"key":"dog_friendly","ka":"ძაღლებთან კარგად","ru":"Дружелюбен к собакам"}]},"card":{"status_searching":{"ka":"ეძებს სახლს","ru":"Ищет дом"},"details":{"ka":"გაიგე მეტი","ru":"Подробнее"}},"passport":{"breed":{"ka":"ჯიში","ru":"Порода"},"sex":{"ka":"სქესი","ru":"Пол"},"weight":{"ka":"წონა","ru":"Вес"},"age":{"ka":"ასაკი","ru":"Возраст"},"character":{"ka":"ხასიათი","ru":"Характер"},"location":{"ka":"მდებარეობა","ru":"Где находится"},"callToAdopt":{"ka":"დარეკეთ წასაყვანად","ru":"Позвоните, чтобы забрать"}},"locations":{"samtredia":{"ka":"სამტრედია (ქალაქი)","ru":"Самтредиа (город)"},"chognari":{"ka":"ჩოგნარი (სოფელი)","ru":"Чогнари (село)"}},"conditions":{"kicker":{"ka":"როგორ მუშაობს","ru":"Как это устроено"},"title":{"ka":"პირობები","ru":"Условия"},"items":[{"icon":"📍","title":{"ka":"ორი ადგილი","ru":"Два места"},"text":{"ka":"ძაღლები ორ ადგილას არიან — ქალაქ სამტრედიასა და სოფელ ჩოგნარში. ბარათზე მითითებულია, სად ვინ არის.","ru":"Собаки находятся в двух местах — в городе Самтредиа и в селе Чогнари. В карточке указано, где какая собака."}},{"icon":"🚗","title":{"ka":"მოდი და აირჩიე","ru":"Приехать и выбрать"},"text":{"ka":"შეგიძლიათ ჩამოხვიდეთ, აირჩიოთ და წაიყვანოთ ძაღლი ადგილზე.","ru":"Можно приехать, выбрать и забрать собаку на месте."}},{"icon":"🤝","title":{"ka":"მოტანა შეკვეთით","ru":"Привезём по запросу"},"text":{"ka":"შევთანხმდებით და საჭიროების შემთხვევაში ძაღლს მოგიყვანთ.","ru":"Договоримся и при необходимости привезём собаку сами."}},{"icon":"🎁","title":{"ka":"უფასოდ","ru":"Бесплатно"},"text":{"ka":"ძაღლებს მოხალისეები უსასყიდლოდ გასცემენ. საფასური არ არის.","ru":"Собак отдают волонтёры бесплатно. Никакой оплаты."}}]},"help":{"kicker":{"ka":"ჩვენი დახმარება","ru":"Как поддержать"},"title":{"ka":"დაგვეხმარეთ","ru":"Помочь"},"subtitle":{"ka":"ნებისმიერი დახმარება გვაახლოებს იმ დღესთან, როცა კიდევ ერთი ძაღლი სახლში მოხვდება.","ru":"Любая помощь приближает момент, когда очередная собака окажется дома."},"items":[{"icon":"🏠","title":{"ka":"წაიყვანე ძაღლი","ru":"Взять собаку"},"text":{"ka":"მთავარი დახმარება — ახალი სახლი.","ru":"Главная помощь — новый дом."}},{"icon":"📣","title":{"ka":"გააზიარე","ru":"Рассказать"},"text":{"ka":"გააზიარეთ Facebook-ში — დაეხმარეთ პატრონის პოვნაში.","ru":"Поделитесь в Facebook — помогите найти хозяев."}},{"icon":"🦴","title":{"ka":"საკვები / ნივთები","ru":"Корм / вещи"},"text":{"ka":"საკვები და ნივთები ძაღლებისთვის ყოველთვის გამოგვადგება.","ru":"Корм и вещи для собак всегда пригодятся."}},{"icon":"📞","title":{"ka":"დარეკეთ","ru":"Позвонить"},"text":{"ka":"კითხვებზე ტელეფონით გიპასუხებთ.","ru":"На вопросы ответим по телефону."}}]},"footer":{"about":{"ka":"მოხალისეების პროექტი ძაღლების დასახმარებლად — სამტრედია და სოფელი ჩოგნარი.","ru":"Волонтёрский проект помощи собакам — Самтредиа и село Чогнари."},"place":{"ka":"საქართველო, სამტრედია · 2026","ru":"Грузия, Самтредиа · 2026"}},"mobileActions":{"call":{"ka":"დარეკვა","ru":"Позвонить"},"dogs":{"ka":"ძაღლები","ru":"Собаки"},"help":{"ka":"დახმარება","ru":"Помочь"}}};
+const DEMO_PW = "chognari";
+
+// ============================================================
+//  СЛОЙ ДАННЫХ (этап 2: localStorage).
+//  На этапе 3 каждый метод заменяется на fetch('/api/...'):
+//    list()  -> GET  /api/dogs
+//    get(id) -> GET  /api/dogs/:id
+//    save(d) -> POST/PUT /api/dogs       (+ /api/upload для фото в R2)
+//    remove  -> DELETE /api/dogs/:id
+//    toggle/move -> PUT /api/dogs/:id
+//  auth.login -> POST /api/login (пароль из переменной окружения).
+// ============================================================
+const KEY = 'chognari_dogs_v1', AUTH = 'chognari_admin';
+const store = {
+  _load(){ try{ const r=localStorage.getItem(KEY); if(r) return JSON.parse(r);}catch(e){} return null; },
+  _save(a){ localStorage.setItem(KEY, JSON.stringify(a)); },
+  init(){ if(!this._load()) this._save(SEED.map((d,i)=>({...d, sort_order:i}))); },
+  list(){ return (this._load()||[]).slice().sort((a,b)=>(a.sort_order??0)-(b.sort_order??0)); },
+  get(id){ return (this._load()||[]).find(d=>d.id===id); },
+  save(dog){ const a=this._load()||[];
+    if(dog.id){ const i=a.findIndex(d=>d.id===dog.id); if(i>=0) a[i]=dog; else a.push(dog); }
+    else { dog.id=Date.now(); dog.sort_order=a.length; a.push(dog); }
+    this._save(a); return dog; },
+  remove(id){ this._save((this._load()||[]).filter(d=>d.id!==id)); },
+  toggle(id){ const a=this._load()||[]; const d=a.find(x=>x.id===id); if(d){ d.status = d.status==='searching'?'homed':'searching'; this._save(a);} },
+  move(id,dir){ const a=this.list(); const i=a.findIndex(d=>d.id===id), j=i+dir; if(j<0||j>=a.length) return;
+    const tmp=a[i].sort_order; a[i].sort_order=a[j].sort_order; a[j].sort_order=tmp; this._save(a); }
+};
+const auth = {
+  ok(){ return sessionStorage.getItem(AUTH)==='1'; },
+  login(pw){ if(pw===DEMO_PW){ sessionStorage.setItem(AUTH,'1'); return true;} return false; },
+  logout(){ sessionStorage.removeItem(AUTH); }
+};
+
+// ---- справочники / метки ----
+const OPT = SITE.options, LOC = SITE.locations;
+const labelRu = (group,key)=>{ const o=(OPT[group]||[]).find(x=>x.key===key); return o?o.ru:key; };
+const sexKey = d => d.sex; // 'boy' | 'girl'
+const weightKey = kg => kg<10?'lt10':kg<15?'10_15':kg<20?'15_20':kg<25?'20_25':'gt25';
+const weightRu = kg => labelRu('weight', weightKey(kg));
+
+// ---- помощники DOM ----
+const $ = s => document.querySelector(s);
+const esc = s => (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+
+// ============================================================
+//  ВХОД
+// ============================================================
+function showApp(){ $('#login').classList.add('hidden'); $('#app').classList.remove('hidden'); store.init(); renderList(); }
+$('#loginForm').addEventListener('submit', e=>{ e.preventDefault();
+  if(auth.login($('#pw').value.trim())) showApp();
+  else { $('#loginErr').textContent='Неверный пароль'; }
+});
+$('#logout').addEventListener('click', ()=>{ auth.logout(); location.reload(); });
+
+// ============================================================
+//  СПИСОК СОБАК
+// ============================================================
+let filterStatus='all', searchQ='';
+$('#search').addEventListener('input', e=>{ searchQ=e.target.value.toLowerCase().trim(); renderList(); });
+$('#statusSeg').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b)return;
+  filterStatus=b.dataset.s; $('#statusSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b)); renderList(); });
+
+function dogCardHTML(d){
+  const st = (d.status||'searching')==='searching';
+  const main = d.photos && d.photos[0];
+  const chips = [labelRu('sex',sexKey(d)), weightRu(d.weightKg), labelRu('age',d.age), (LOC[d.location]?LOC[d.location].ru:'')]
+    .filter(Boolean).map(c=>`<span class="chip">${esc(c)}</span>`).join('');
+  return `<div class="dcard" data-id="${d.id}">
+    <div class="ph">
+      ${main?`<img src="${esc(main)}" alt="">`:`<div class="nophoto">🐶</div>`}
+      <span class="badge ${st?'searching':'homed'}">${st?'Ищет дом':'Пристроена'}</span>
+      ${d.photos&&d.photos.length>1?`<span class="badge count">📷 ${d.photos.length}</span>`:''}
+    </div>
+    <div class="bd">
+      <h3>${esc(d.name||'Без клички')}</h3>
+      <div class="chips">${chips}</div>
+      <div class="acts">
+        <button class="btn btn-ghost btn-sm" data-act="edit">✏️ Редактировать</button>
+        <button class="btn btn-ghost btn-sm" data-act="toggle">${st?'✓ Пристроена':'↩ Ищет дом'}</button>
+        <button class="btn btn-danger btn-sm" data-act="del">🗑</button>
+        <span class="ord"><button data-act="up" title="Выше">▲</button><button data-act="down" title="Ниже">▼</button></span>
+      </div>
+    </div>
+  </div>`;
+}
+function renderList(){
+  let list = store.list();
+  if(filterStatus!=='all') list=list.filter(d=>(d.status||'searching')===filterStatus);
+  if(searchQ) list=list.filter(d=>(d.name||'').toLowerCase().includes(searchQ));
+  const all = store.list();
+  $('#topCnt').textContent = `Всего: ${all.length} · ищут дом: ${all.filter(d=>(d.status||'searching')==='searching').length}`;
+  const g=$('#grid');
+  if(!list.length){ g.innerHTML=`<div class="empty"><div class="big">🐾</div><div>Ничего не найдено.</div></div>`; return; }
+  g.innerHTML = list.map(dogCardHTML).join('');
+  g.querySelectorAll('.dcard').forEach(card=>{
+    const id=+card.dataset.id;
+    card.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click',()=>{
+      const a=b.dataset.act;
+      if(a==='edit') openEditor(id);
+      else if(a==='toggle'){ store.toggle(id); renderList(); toast('Статус изменён'); }
+      else if(a==='del'){ const d=store.get(id); if(confirm(`Удалить собаку «${d?d.name:''}»? Действие нельзя отменить.`)){ store.remove(id); renderList(); toast('Удалено'); } }
+      else if(a==='up'){ store.move(id,-1); renderList(); }
+      else if(a==='down'){ store.move(id,1); renderList(); }
+    }));
+  });
+}
+
+// ============================================================
+//  ФОРМА КАРТОЧКИ
+// ============================================================
+let editId=null, photos=[];
+function openEditor(id){
+  editId = id||null;
+  const d = id ? store.get(id) : null;
+  photos = d && d.photos ? d.photos.slice() : [];
+  $('#edTitle').textContent = id ? 'Редактировать собаку' : 'Новая собака';
+  $('#formErr').textContent='';
+  $('#form').innerHTML = formHTML(d);
+  wireForm();
+  $('#editor').classList.add('open');
+  renderPhotos();
+}
+function opts(group, sel){ return OPT[group].map(o=>`<option value="${o.key}" ${sel===o.key?'selected':''}>${esc(o.ru)}</option>`).join(''); }
+function formHTML(d){
+  d = d||{};
+  const sex = d.sex||'boy', ster = !!d.sterilized;
+  const chosenChar = new Set(d.character||[]);
+  const charChoices = OPT.character.map(o=>`<span class="choice ${chosenChar.has(o.key)?'on':''}" data-char="${o.key}">${esc(o.ru)}</span>`).join('');
+  return `
+  <div class="field">
+    <label>Кличка <span class="opt">(обязательно)</span></label>
+    <input type="text" id="f_name" value="${esc(d.name||'')}" placeholder="Например: Красавчик" />
+  </div>
+
+  <div class="field">
+    <label>Фотографии <span class="opt">(1–5, первая — главная)</span></label>
+    <div class="drop" id="drop"><div class="e">📷</div><b>Перетащите сюда несколько фото сразу</b><br>или нажмите, чтобы выбрать файлы<div class="hint" id="photoCount"></div></div>
+    <input type="file" id="fileInp" accept="image/*" multiple class="hidden" />
+    <div class="photos" id="photos"></div>
+  </div>
+
+  <div class="row2">
+    <div class="field">
+      <label>Пол</label>
+      <div class="choices" id="sexChoices">
+        <span class="choice ${sex==='boy'?'on':''}" data-sex="boy">Мальчик</span>
+        <span class="choice ${sex==='girl'?'on':''}" data-sex="girl">Девочка</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>Стерилизация</label>
+      <div class="choices"><span class="choice ${ster?'on':''}" id="sterChoice">${ster?'✓ Стерилизована':'Не стерилизована'}</span></div>
+    </div>
+  </div>
+
+  <div class="row2">
+    <div class="field">
+      <label>Вес, кг</label>
+      <input type="number" id="f_weight" min="0" step="0.5" value="${d.weightKg??''}" placeholder="напр. 18" />
+      <div class="hint" id="weightHint"></div>
+    </div>
+    <div class="field">
+      <label>Возраст</label>
+      <select id="f_age">${opts('age', d.age||'young')}</select>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Характер <span class="opt">(можно несколько)</span></label>
+    <div class="choices" id="charChoices">${charChoices}</div>
+  </div>
+
+  <div class="row2">
+    <div class="field">
+      <label>Локация</label>
+      <select id="f_loc">
+        <option value="samtredia" ${d.location==='samtredia'?'selected':''}>${esc(LOC.samtredia.ru)}</option>
+        <option value="chognari" ${d.location==='chognari'?'selected':''}>${esc(LOC.chognari.ru)}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field subfield">
+    <div class="sl">Порода</div>
+    <div class="row2">
+      <div><label class="opt">Грузинский (ka)</label><input type="text" id="f_breed_ka" value="${esc(d.breed?d.breed.ka:'')}" placeholder="ჯიში" /></div>
+      <div><label class="opt">Русский (для Андрея)</label><input type="text" id="f_breed_ru" value="${esc(d.breed?d.breed.ru:'')}" placeholder="Метис" /></div>
+    </div>
+  </div>
+
+  <div class="field subfield">
+    <div class="sl">Описание / история</div>
+    <label class="opt">Грузинский (ka) — основной текст для местных</label>
+    <textarea id="f_desc_ka" placeholder="ტექსტი ქართულად">${esc(d.description?d.description.ka:'')}</textarea>
+    <label class="opt" style="margin-top:10px">Русский (мелким шрифтом на сайте, для Андрея)</label>
+    <textarea id="f_desc_ru" placeholder="Текст на русском">${esc(d.description?d.description.ru:'')}</textarea>
+  </div>
+
+  <div class="field">
+    <label>Статус</label>
+    <div class="choices" id="statusChoices">
+      <span class="choice ${(d.status||'searching')==='searching'?'on':''}" data-st="searching">Ищет дом</span>
+      <span class="choice ${d.status==='homed'?'on':''}" data-st="homed">Пристроена (скрыта на сайте)</span>
+    </div>
+  </div>`;
+}
+
+function wireForm(){
+  // вес -> подсказка диапазона
+  const upd=()=>{ const v=parseFloat($('#f_weight').value); $('#weightHint').textContent = isNaN(v)?'' : `В фильтре: ${weightRu(v)}`; };
+  $('#f_weight').addEventListener('input', upd); upd();
+  // пол
+  $('#sexChoices').addEventListener('click', e=>{ const c=e.target.closest('[data-sex]'); if(!c)return;
+    $('#sexChoices').querySelectorAll('.choice').forEach(x=>x.classList.toggle('on',x===c)); });
+  // стерилизация (тоггл)
+  $('#sterChoice').addEventListener('click', e=>{ const on=e.target.classList.toggle('on'); e.target.textContent= on?'✓ Стерилизована':'Не стерилизована'; });
+  // характер (мультивыбор)
+  $('#charChoices').addEventListener('click', e=>{ const c=e.target.closest('[data-char]'); if(c) c.classList.toggle('on'); });
+  // статус
+  $('#statusChoices').addEventListener('click', e=>{ const c=e.target.closest('[data-st]'); if(!c)return;
+    $('#statusChoices').querySelectorAll('.choice').forEach(x=>x.classList.toggle('on',x===c)); });
+  // фото
+  const drop=$('#drop'), inp=$('#fileInp'), box=$('#editor .modal-box');
+  drop.addEventListener('click',()=>inp.click());
+  inp.addEventListener('change', e=>{ addFiles(e.target.files); inp.value=''; });
+  // подсветка при перетаскивании над всей формой
+  ['dragover','dragenter'].forEach(ev=>box.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.add('hover'); }));
+  box.addEventListener('dragleave', e=>{ if(!box.contains(e.relatedTarget)) drop.classList.remove('hover'); });
+  // файлы можно бросить в любое место формы, не только в пунктирную рамку
+  box.addEventListener('drop', e=>{ e.preventDefault(); drop.classList.remove('hover'); addFiles(e.dataTransfer.files); });
+}
+function addFiles(files){
+  const left = 5 - photos.length;
+  if(left<=0){ toast('Максимум 5 фото'); return; }
+  [...files].slice(0,left).forEach(f=>{ if(!f.type.startsWith('image/'))return;
+    const r=new FileReader(); r.onload=()=>{ photos.push(r.result); renderPhotos(); }; r.readAsDataURL(f); });
+}
+function renderPhotos(){
+  const box=$('#photos'); if(!box) return;
+  box.innerHTML = photos.map((p,i)=>`<div class="pthumb ${i===0?'main':''}">
+    <img src="${p}" alt="">
+    ${i===0?'<span class="main-tag">Главная</span>':''}
+    <div class="pacts">
+      ${i>0?`<button data-pi="${i}" data-pa="main" title="Сделать главной">★</button>`:''}
+      ${i>0?`<button data-pi="${i}" data-pa="left">←</button>`:''}
+      ${i<photos.length-1?`<button data-pi="${i}" data-pa="right">→</button>`:''}
+      <button data-pi="${i}" data-pa="del">✕</button>
+    </div>
+  </div>`).join('');
+  const pc=$('#photoCount'); if(pc) pc.textContent = photos.length ? `Загружено: ${photos.length} из 5${photos.length>=5?' (максимум)':''}` : '';
+  box.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    const i=+b.dataset.pi, a=b.dataset.pa;
+    if(a==='del') photos.splice(i,1);
+    else if(a==='main'){ const [x]=photos.splice(i,1); photos.unshift(x); }
+    else if(a==='left'){ [photos[i-1],photos[i]]=[photos[i],photos[i-1]]; }
+    else if(a==='right'){ [photos[i+1],photos[i]]=[photos[i],photos[i+1]]; }
+    renderPhotos();
+  }));
+}
+
+function collect(){
+  const name=$('#f_name').value.trim();
+  const sex=$('#sexChoices .choice.on').dataset.sex;
+  const ster=$('#sterChoice').classList.contains('on');
+  const weightKg=parseFloat($('#f_weight').value);
+  const age=$('#f_age').value;
+  const character=[...$('#charChoices').querySelectorAll('.choice.on')].map(c=>c.dataset.char);
+  const location=$('#f_loc').value;
+  const status=$('#statusChoices .choice.on').dataset.st;
+  const breed={ka:$('#f_breed_ka').value.trim(), ru:$('#f_breed_ru').value.trim()};
+  const description={ka:$('#f_desc_ka').value.trim(), ru:$('#f_desc_ru').value.trim()};
+  return { name, photos:photos.slice(), sex, sterilized:ster, weightKg:isNaN(weightKg)?null:weightKg, age, character, location, status, breed, description };
+}
+$('#saveBtn').addEventListener('click', ()=>{
+  const d=collect(); const errs=[];
+  if(!d.name) errs.push('кличку');
+  if(!d.photos.length) errs.push('хотя бы одно фото');
+  if(d.weightKg==null) errs.push('вес');
+  if(errs.length){ $('#formErr').textContent='Заполните: '+errs.join(', '); 
+    if(!d.name) $('#f_name').classList.add('bad'); if(d.weightKg==null) $('#f_weight').classList.add('bad'); return; }
+  if(editId) d.id=editId;
+  const existing = editId ? store.get(editId) : null;
+  if(existing) d.sort_order = existing.sort_order;
+  store.save(d);
+  closeEditor(); renderList(); toast(editId?'Сохранено':'Собака добавлена');
+});
+$('#addBtn').addEventListener('click', ()=>openEditor(null));
+function closeEditor(){ $('#editor').classList.remove('open'); }
+$('#editor').querySelectorAll('[data-close]').forEach(el=>el.addEventListener('click', closeEditor));
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeEditor(); });
+$('#form').addEventListener('input', e=>{ if(e.target.classList) e.target.classList.remove('bad'); $('#formErr').textContent=''; });
+
+// пока форма открыта — не даём браузеру открывать перетащенные файлы мимо зоны
+['dragover','drop'].forEach(ev=>window.addEventListener(ev,e=>{ if($('#editor').classList.contains('open')) e.preventDefault(); }));
+
+// автологин, если сессия активна
+if(auth.ok()) showApp();
+})();</script> </body> </html>

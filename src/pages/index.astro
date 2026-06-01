@@ -1,0 +1,238 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Conditions from '../components/Conditions.astro';
+import Help from '../components/Help.astro';
+import Footer from '../components/Footer.astro';
+import BiText from '../components/BiText.astro';
+import site from '../data/site.json';
+import dogs from '../data/dogs.json';
+const tel = site.contact.phone.replace(/[^+\d]/g,'');
+---
+<Base>
+  <Header />
+
+  <main class="wrap">
+    <!-- ====== DOGS ====== -->
+    <section class="panel active" id="dogs">
+      <div class="hero">
+        <div class="hero-grid">
+          <div>
+            <span class="eyebrow"><BiText t={site.hero.eyebrow} /></span>
+            <h1><span class="bi"><span class="ka">{site.hero.title.ka}</span><span class="ru">{site.hero.title.ru}</span></span></h1>
+            <p class="lead bi"><span class="ka">{site.hero.subtitle.ka}</span><span class="ru">{site.hero.subtitle.ru}</span></p>
+            <div class="hero-cta">
+              <button class="btn btn-primary" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})"><BiText t={site.hero.ctaPrimary} /></button>
+              <button class="btn btn-ghost" data-goto="help"><BiText t={site.hero.ctaHelp} /></button>
+            </div>
+          </div>
+          <div class="hero-art">
+            <img src={dogs[0].photos[0]} alt="Собака" />
+          </div>
+        </div>
+      </div>
+
+      <div class="sec" id="catalog">
+        <div class="sec-head">
+          <div class="kick"><BiText t={site.catalog.kicker} /></div>
+          <h2><BiText t={site.catalog.title} /></h2>
+          <p class="sub bi"><span class="ka">{site.catalog.subtitle.ka}</span><span class="ru">{site.catalog.subtitle.ru}</span></p>
+        </div>
+
+        <div class="catalog">
+          <aside class="filter">
+            <div class="filter-top">🎚 <span><span class="ka">{site.filter.title.ka}</span><span class="ru">{site.filter.title.ru}</span></span></div>
+            <button class="reset" id="reset"><BiText t={site.filter.reset} /></button>
+
+            {(['sex','size','age','character']).map((g, i) => (
+              <div class={`fgroup${i===0?' open':''}`} data-group={g}>
+                <div class="fgroup-h">
+                  <span><span class="ka">{site.filter.groups[g].ka}</span> <span class="ru">{site.filter.groups[g].ru}</span></span>
+                  <span class="chev">›</span>
+                </div>
+                <div class="fopts">
+                  {site.options[g].map(o => (
+                    <span class="chip" data-v={o.key}><span class="ka">{o.ka}</span><span class="ru">{o.ru}</span></span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </aside>
+
+          <div>
+            <div class="count"><span class="ka">{site.catalog.found.ka}:</span> <b id="cnt">0</b> <span class="ru">/ {site.catalog.found.ru}</span></div>
+            <div class="grid" id="grid"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <Conditions />
+    <Help />
+  </main>
+
+  <Footer />
+
+  <!-- mobile sticky -->
+  <div class="mobile-actions">
+    <a class="ma-call" href={`tel:${tel}`}><span class="e">📞</span><BiText t={site.mobileActions.call} /></a>
+    <button class="ma-dogs" data-goto="dogs"><span class="e">🐶</span><BiText t={site.mobileActions.dogs} /></button>
+    <button class="ma-help" data-goto="help"><span class="e">💛</span><BiText t={site.mobileActions.help} /></button>
+  </div>
+
+  <!-- passport modal -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-bg" data-close></div>
+    <div class="modal-box">
+      <button class="modal-close" data-close>✕</button>
+      <div class="pp-gallery"><img id="pp-main" src="" alt="" /></div>
+      <div class="pp-thumbs" id="pp-thumbs"></div>
+      <div class="pp-body" id="pp-body"></div>
+    </div>
+  </div>
+
+  <script is:inline define:vars={{ SEED: dogs, SITE: site, TEL: tel }}>
+    // DOGS грузятся из общей базы через API; SEED — запасной вариант, если API недоступен.
+    let DOGS = SEED;
+    // ---- справочники меток ----
+    const map = (arr) => Object.fromEntries(arr.map(o => [o.key, o]));
+    const L = { sex: map(SITE.options.sex), size: map(SITE.options.size), weight: map(SITE.options.weight), age: map(SITE.options.age), character: map(SITE.options.character) };
+    const P = SITE.passport, C = SITE.card, LOC = SITE.locations;
+
+    const sexKey = (d) => d.sex; // 'boy' | 'girl'
+    const weightKey = (kg) => kg < 10 ? 'lt10' : kg < 15 ? '10_15' : kg < 20 ? '15_20' : kg < 25 ? '20_25' : 'gt25';
+    // Размер: явное поле d.size (s|m|l) имеет приоритет; иначе считаем из веса (s <10, m 10–25, l >25).
+    const sizeOf = (d) => d.size || (d.weightKg == null ? 'm' : (d.weightKg < 10 ? 's' : d.weightKg > 25 ? 'l' : 'm'));
+    // Метки и цвет бейджа статуса.
+    const STATUS = { searching: C.status_searching, reserved: C.status_reserved, homed: C.status_homed };
+    const bi = (o) => `<span class="bi"><span class="ka">${o.ka}</span><span class="ru">${o.ru}</span></span>`;
+
+    // ---- табы ----
+    const tabs = document.querySelectorAll('.tab');
+    const panels = document.querySelectorAll('.panel');
+    function go(name){
+      tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+      panels.forEach(p => p.classList.toggle('active', p.id === name));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    tabs.forEach(t => t.addEventListener('click', () => go(t.dataset.tab)));
+    document.querySelectorAll('[data-goto]').forEach(el => el.addEventListener('click', e => { e.preventDefault(); go(el.dataset.goto); }));
+
+    // ---- фильтр ----
+    const state = { sex:new Set(), size:new Set(), age:new Set(), character:new Set() };
+    document.querySelectorAll('.fgroup-h').forEach(h => h.addEventListener('click', () => h.parentElement.classList.toggle('open')));
+    document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+      const g = c.closest('.fgroup').dataset.group, v = c.dataset.v;
+      c.classList.toggle('on');
+      state[g].has(v) ? state[g].delete(v) : state[g].add(v);
+      render();
+    }));
+    document.getElementById('reset').addEventListener('click', () => {
+      Object.values(state).forEach(s => s.clear());
+      document.querySelectorAll('.chip.on').forEach(c => c.classList.remove('on'));
+      render();
+    });
+
+    function match(d){
+      // Этап 1: показываем ВСЕ статусы (ищет дом / зарезервирована / пристроена) с бейджем.
+      if (state.sex.size){
+        const wantBoy = state.sex.has('boy'), wantGirl = state.sex.has('girl'), wantSter = state.sex.has('ster');
+        if ((wantBoy || wantGirl) && !((wantBoy && d.sex==='boy') || (wantGirl && d.sex==='girl'))) return false;
+        if (wantSter && !d.sterilized) return false;
+      }
+      if (state.size.size && !state.size.has(sizeOf(d))) return false;
+      if (state.age.size && !state.age.has(d.age)) return false;
+      if (state.character.size && ![...state.character].some(c => d.character.includes(c))) return false;
+      return true;
+    }
+
+    function cardHTML(d){
+      const ph2 = d.photos[1] ? `<img class="ph2" src="${d.photos[1]}" alt="" loading="lazy">` : '';
+      const pills = [bi(L.sex[d.sex]), bi(L.size[sizeOf(d)]), bi(L.age[d.age])]
+        .map(x => `<span class="pill">${x}</span>`).join('');
+      const st = d.status || 'searching';
+      const stLbl = STATUS[st] || STATUS.searching;
+      return `<article class="card" data-id="${d.id}">
+        <div class="card-img">
+          <img src="${d.photos[0]}" alt="${d.name}" loading="lazy">
+          ${ph2}
+          <span class="card-tag status-${st}"><span class="ka">${stLbl.ka}</span><span class="ru">${stLbl.ru}</span></span>
+          <span class="card-loc"><span class="ka">📍 ${LOC[d.location].ka}</span><span class="ru">📍 ${LOC[d.location].ru}</span></span>
+        </div>
+        <div class="card-body">
+          <h3>${d.name}</h3>
+          <p class="desc bi"><span class="ka">${d.description.ka}</span><span class="ru">${d.description.ru}</span></p>
+          <div class="card-meta">${pills}</div>
+        </div>
+      </article>`;
+    }
+
+    function render(){
+      const list = DOGS.filter(match);
+      document.getElementById('cnt').textContent = list.length;
+      const grid = document.getElementById('grid');
+      if (!list.length){
+        grid.innerHTML = `<div class="empty"><h3>${SITE.catalog.emptyTitle.ka}</h3><p>${SITE.catalog.emptyText.ka}</p></div>`;
+        return;
+      }
+      grid.innerHTML = list.map(cardHTML).join('');
+      grid.querySelectorAll('.card').forEach(c => c.addEventListener('click', () => openPassport(+c.dataset.id)));
+    }
+
+    // ---- паспорт ----
+    const modal = document.getElementById('modal');
+    function spec(lbl, valHTML){
+      return `<div class="spec"><div class="lbl"><span class="ka">${lbl.ka}</span> <span class="ru">${lbl.ru}</span></div><div class="val">${valHTML}</div></div>`;
+    }
+    function openPassport(id){
+      const d = DOGS.find(x => x.id === id); if (!d) return;
+      document.getElementById('pp-main').src = d.photos[0];
+      document.getElementById('pp-thumbs').innerHTML = d.photos.map((p,i) =>
+        `<div class="pp-thumb${i===0?' on':''}" data-src="${p}"><img src="${p}" alt=""></div>`).join('');
+      document.querySelectorAll('.pp-thumb').forEach(t => t.addEventListener('click', () => {
+        document.getElementById('pp-main').src = t.dataset.src;
+        document.querySelectorAll('.pp-thumb').forEach(x => x.classList.remove('on'));
+        t.classList.add('on');
+      }));
+      const charVal = d.character.map(k => L.character[k] ? bi(L.character[k]) : '').join(' ');
+      document.getElementById('pp-body').innerHTML = `
+        <h3>${d.name}</h3>
+        <div class="pp-desc"><span class="ka">${d.description.ka}</span><span class="ru">${d.description.ru}</span></div>
+        <div class="pp-specs">
+          ${spec(P.sex, bi( d.sterilized
+              ? { ka: `${d.sex==='boy' ? L.sex.boy.ka : L.sex.girl.ka} · ${L.sex.ster.ka}`,
+                  ru: `${d.sex==='boy' ? L.sex.boy.ru : L.sex.girl.ru} · ${L.sex.ster.ru}` }
+              : L.sex[d.sex] ))}
+          ${spec(P.breed, bi(d.breed))}
+          ${spec(P.size, bi(L.size[sizeOf(d)]))}
+          ${d.weightKg != null ? spec(P.weight, bi(L.weight[weightKey(d.weightKg)])) : ''}
+          ${spec(P.age, bi(L.age[d.age]))}
+          ${spec(P.character, charVal)}
+          ${spec(P.location, bi(LOC[d.location]))}
+        </div>
+        <div class="pp-cta">
+          <div class="lbl"><span class="ka">${P.callToAdopt.ka} · ${SITE.contact.name.ka}</span><span class="ru">${P.callToAdopt.ru} · ${SITE.contact.name.ru}</span></div>
+          <a href="tel:${TEL}">${SITE.contact.phone}</a>
+        </div>`;
+      modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+    }
+    modal.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', () => {
+      modal.classList.remove('open'); modal.setAttribute('aria-hidden','true');
+    }));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); } });
+
+    // ---- загрузка собак из общей базы ----
+    function updateHero(){
+      const first = DOGS.find(d => !d.status || d.status === 'searching');
+      const img = document.querySelector('.hero-art img');
+      if (img && first && first.photos && first.photos[0]) img.src = first.photos[0];
+    }
+    fetch('/api/dogs')
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(data => { if (Array.isArray(data) && data.length) { DOGS = data; } })
+      .catch(() => { /* остаёмся на SEED */ })
+      .finally(() => { render(); updateHero(); });
+
+    render();
+  </script>
+</Base>

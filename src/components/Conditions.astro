@@ -1,0 +1,22 @@
+---
+import site from '../data/site.json';
+import BiText from './BiText.astro';
+const c = site.conditions;
+---
+<section class="panel" id="conditions">
+  <div class="sec">
+    <div class="sec-head">
+      <div class="kick"><BiText t={c.kicker} /></div>
+      <h2><BiText t={c.title} /></h2>
+    </div>
+    <div class="cond-grid">
+      {c.items.map(it => (
+        <div class="cond-card">
+          <div class="ic">{it.icon}</div>
+          <h3><BiText t={it.title} /></h3>
+          <p class="bi"><span class="ka" set:html={it.text.ka}></span><span class="ru" set:html={it.text.ru}></span></p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

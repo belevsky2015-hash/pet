@@ -1,0 +1,3 @@
+# Скопируй этот файл в .dev.vars (без .example) для локального запуска
+# через `npx wrangler pages dev`. В .dev.vars лежит секрет — он в .gitignore.
+ADMIN_PASSWORD = "придумай-пароль"

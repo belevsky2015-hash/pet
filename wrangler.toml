@@ -1,0 +1,25 @@
+# Конфигурация Cloudflare Pages + биндинги для функций (этап 3).
+# name — имя Pages-проекта (можно поменять под своё).
+name = "chognari-dogs"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "dist"
+
+# База данных D1. database_id вставь после создания базы:
+#   npx wrangler d1 create chognari-dogs
+# (команда напечатает database_id — скопируй его сюда).
+[[d1_databases]]
+binding = "DB"
+database_name = "chognari-dogs"
+database_id = "6c2e2f6f-f92d-4897-8084-1a2b40343640"
+
+# Хранилище фото R2. Сначала создай бакет:
+#   npx wrangler r2 bucket create chognari-photos
+[[r2_buckets]]
+binding = "PHOTOS"
+bucket_name = "chognari-photos"
+
+# ВНИМАНИЕ: пароль админки сюда НЕ пишем (файл попадает в репозиторий).
+# Его задают секретом:
+#   npx wrangler pages secret put ADMIN_PASSWORD
+# Для локального запуска (wrangler pages dev) — в файле .dev.vars:
+#   ADMIN_PASSWORD = "ваш-пароль"

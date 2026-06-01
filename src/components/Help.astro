@@ -1,0 +1,28 @@
+---
+import site from '../data/site.json';
+import BiText from './BiText.astro';
+const h = site.help;
+const tel = site.contact.phone.replace(/[^+\d]/g,'');
+---
+<section class="panel" id="help">
+  <div class="sec">
+    <div class="sec-head">
+      <div class="kick"><BiText t={h.kicker} /></div>
+      <h2><BiText t={h.title} /></h2>
+      <p class="sub bi"><span class="ka">{h.subtitle.ka}</span><span class="ru">{h.subtitle.ru}</span></p>
+    </div>
+    <div class="help-grid">
+      {h.items.map(it => (
+        <div class="help-card">
+          <div class="e">{it.icon}</div>
+          <h4><BiText t={it.title} /></h4>
+          <p class="bi"><span class="ka">{it.text.ka}</span><span class="ru">{it.text.ru}</span></p>
+        </div>
+      ))}
+    </div>
+    <div class="help-call">
+      <div class="who"><b>{site.contact.name.ka}</b></div>
+      <a class="bignum" href={`tel:${tel}`}>{site.contact.phone}</a>
+    </div>
+  </div>
+</section>

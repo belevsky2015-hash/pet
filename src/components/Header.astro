@@ -1,0 +1,38 @@
+---
+import site from '../data/site.json';
+import BiText from './BiText.astro';
+const tel = site.contact.phone.replace(/[^+\d]/g,'');
+---
+<header>
+  <div class="wrap nav">
+    <div class="brand">
+      <div class="gerbs">
+        <img src="/gerb-samtredia.svg" alt="Герб Самтредиа" title="სამტრედია" />
+        <img src="/gerb-chognari.svg" alt="Знак села Чагнари" title="ჩაღნარი" />
+      </div>
+      <div class="brand-name">{site.brand.ka}<small><span class="ka">სამტრედია · ჩაღნარი</span></small></div>
+    </div>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="dogs"><BiText t={site.nav.dogs} /></button>
+      <button class="tab" data-tab="conditions"><BiText t={site.nav.conditions} /></button>
+      <button class="tab" data-tab="help"><BiText t={site.nav.help} /></button>
+    </nav>
+
+    <a class="phone-box" href={`tel:${tel}`}>
+      <span class="ic">📞</span>
+      <span>
+        <span class="num">{site.contact.phone}</span>
+        <span class="who"><b>{site.contact.name.ka}</b> · {site.contact.phoneNote.ka}</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<!--
+  Этап 1: интерфейс только на грузинском (data-lang="ka" задан в Base.astro).
+  Переключатель языка убран намеренно. Чтобы вернуть мультиязычность позже —
+  достаточно вставить кнопки .lang-switch и переключать data-lang на body
+  (CSS body[data-lang] уже поддерживает ka / ru / both). Данные ru хранятся в JSON.
+-->
+
